@@ -9,7 +9,7 @@
 - Añade un submenú en **Herramientas** para acceder a una página personalizada con esta funcionalidad.
 - Compatible con entradas estándar de WordPress.
 - Lista las entradas publicadas con metadescripción vacía en el escritorio de administración.
-
+- Permite generar una meade4scripción para cada entrada
 ---
 
 ## Requisitos
@@ -31,18 +31,13 @@
 2. Para ver la lista de entradas:
    - Accede a **Herramientas > Smart Meta Desc** desde el menú lateral.
 3. Verás una lista de entradas publicadas sin metadescripción.
+4. Cada entrada se mostrará junto a un botón "Generar Metadesc", que mostrará un textarea
 
 ---
 
 ## Configuración
 1. Puedes seleccionar el número de entradas por defecto que se muestra
-2. 
-
----
-
-
-## Personalización
-Si deseas modificar la funcionalidad o el diseño, puedes editar el archivo principal del plugin: `smartmetadesc.php`.
+2. Puedes seleccionar qué modelo de IA generará las metadescripciones
 
 ---
 
