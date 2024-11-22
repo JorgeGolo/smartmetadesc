@@ -16,6 +16,24 @@ function smartmetadesc_add_settings_link($links) {
     return $links;
 }
 
+
+add_action('admin_enqueue_scripts', 'smartmetadesc_enqueue_scripts');
+function smartmetadesc_enqueue_scripts($hook) {
+    // Asegurarte de cargar el script solo en las páginas del plugin
+    if ($hook !== 'tools_page_smartmetadesc-lista') {
+        return;
+    }
+
+    wp_enqueue_script(
+        'smartmetadesc-script', // Handle del script
+        plugin_dir_url(__FILE__) . 'assets/js/smartmetadesc.js', // Ruta del archivo
+        array(), // Dependencias (si hay)
+        '1.0', // Versión
+        true // Cargar en el footer
+    );
+}
+
+
 // Agregar un enlace de "Ajustes" en el menú de WordPress
 add_action('admin_menu', 'smartmetadesc_add_menu');
 function smartmetadesc_add_menu() {
@@ -38,8 +56,6 @@ function smartmetadesc_add_menu() {
 
 
 }
-
-
 
 
 
@@ -144,9 +160,7 @@ function smartmetadesc_render_page() {
             // Mostrar el título de la entrada con un botón
             echo '<li>';
             echo esc_html($post->post_title);
-            echo '<form onsubmit="event.preventDefault();" style="display: inline;">';
-            echo '<button type="button" class="button button-secondary" onclick="showTextarea(this)">Generar MetaDesc</button>';
-            echo '</form>';
+            echo '<button type="button" class="button button-secondary">Generar MetaDesc</button>';
             echo '<div class="textarea-container" style="display: none; margin-top: 10px;">';
             echo '<textarea rows="4" cols="50" placeholder="Escribe la meta descripción aquí..."></textarea>';
             echo '</div>';
@@ -159,25 +173,5 @@ function smartmetadesc_render_page() {
 
     echo '</div>';
 
-      // Incluir el JavaScript necesario
-     echo '<script>
-        function showTextarea(button) {
-            console.log("Botón clickeado");
-            
-            // Ocultar todos los contenedores abiertos
-            const allContainers = document.querySelectorAll(".textarea-container");
-            allContainers.forEach(container => {
-                container.style.display = "none";
-            });
-        
-            // Mostrar el contenedor relacionado con el botón
-            var container = button.closest("li").querySelector(".textarea-container");
-            if (container) {
-                console.log("Contenedor encontrado:", container);
-                container.style.display = "block";
-            } else {
-                console.error("No se encontró el contenedor.");
-            }
-        }
-  </script>';
+    
 }
