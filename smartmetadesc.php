@@ -6,20 +6,75 @@ Version: 1.1
 Author: Tu Nombre
 */
 
-add_action('admin_menu', 'smartmetadesc_add_menu');
-
-function smartmetadesc_add_menu() {
-    // Agregar un submenú bajo la sección "Herramientas"
-    add_submenu_page(
-        'tools.php',                     // Página padre (Herramientas)
-        'Smart Meta Desc',             // Título de la página
-        'Smart Meta Desc',             // Texto del menú
-        'manage_options',                // Capacidad requerida
-        'smartmetadesc-lista',           // Slug único del menú
-        'smartmetadesc_render_page'      // Función que renderiza el contenido
-    );
+// Agregar un enlace de "Ajustes" en la página de plugins de WordPress
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'smartmetadesc_add_settings_link');
+function smartmetadesc_add_settings_link($links) {
+    // Crear el enlace de ajustes que apunta a la página de configuración del plugin
+    $settings_link = '<a href="options-general.php?page=smartmetadesc-configuracion">Ajustes</a>';
+    // Agregar el enlace al principio del array de enlaces
+    array_unshift($links, $settings_link);
+    return $links;
 }
 
+// Agregar un enlace de "Ajustes" en el menú de WordPress
+add_action('admin_menu', 'smartmetadesc_add_menu');
+function smartmetadesc_add_menu() {
+    // Agregar un enlace de "Ajustes" en la página de "Ajustes"
+    add_options_page(
+        'Configuración de Smart Meta Desc',   // Título de la página
+        'Smart Meta Desc',                    // Nombre del menú
+        'manage_options',                     // Capacidad requerida
+        'smartmetadesc-configuracion',        // Slug único del menú
+        'smartmetadesc_config_page'           // Función que renderiza la página
+    );
+    add_submenu_page(
+        'tools.php',                   // Página padre (Herramientas)
+        'Smart Meta Desc',              // Título de la página
+        'Smart Meta Desc',              // Texto del menú
+        'manage_options',               // Capacidad requerida
+        'smartmetadesc-lista',          // Slug único del menú
+        'smartmetadesc_render_page'     // Función que renderiza el contenido
+    );
+
+
+}
+
+
+
+
+
+// Página de configuración del plugin
+function smartmetadesc_config_page() {
+    // Verificar si el usuario tiene permisos para administrar opciones
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    // Comprobar si el formulario de configuración fue enviado
+    if (isset($_POST['submit'])) {
+        // Guardar el número de entradas predeterminado
+        update_option('smartmetadesc_num_posts', intval($_POST['num_posts']));
+        echo '<div class="updated"><p>Configuración guardada.</p></div>';
+    }
+
+    // Obtener la configuración guardada (valor por defecto es 10)
+    $num_posts = get_option('smartmetadesc_num_posts', 10);
+
+    echo '<div class="wrap">';
+    echo '<h1>Configuración de Smart Meta Desc</h1>';
+    echo '<form method="post" action="">';
+    echo '<table class="form-table">';
+    echo '<tr>';
+    echo '<th scope="row"><label for="num_posts">Número de entradas a mostrar por defecto:</label></th>';
+    echo '<td><input type="number" id="num_posts" name="num_posts" value="' . esc_attr($num_posts) . '" min="1" /></td>';
+    echo '</tr>';
+    echo '</table>';
+    echo '<p class="submit"><button type="submit" name="submit" class="button button-primary">Guardar cambios</button></p>';
+    echo '</form>';
+    echo '</div>';
+}
+
+// Página principal del plugin (mostrar las entradas con meta descripción vacía)
 function smartmetadesc_render_page() {
     echo '<div class="wrap">';
     echo '<h1>Smart Meta Desc</h1>';

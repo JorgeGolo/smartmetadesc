@@ -29,11 +29,17 @@
 ## Uso
 1. Activa el plugin desde el menú **Plugins** de WordPress.
 2. Para ver la lista de entradas:
-   - Ve al escritorio de administración y localiza el widget **"Lista de Entradas"**.
-   - O accede a **Herramientas > Lista de Entradas** desde el menú lateral.
-3. Verás una lista de entradas publicadas y, junto a cada una, si la meta descripción está presente o no.
+   - Accede a **Herramientas > Smart Meta Desc** desde el menú lateral.
+3. Verás una lista de entradas publicadas sin metadescripción.
 
 ---
+
+## Configuración
+1. Puedes seleccionar el número de entradas por defecto que se muestra
+2. 
+
+---
+
 
 ## Personalización
 Si deseas modificar la funcionalidad o el diseño, puedes editar el archivo principal del plugin: `smartmetadesc.php`.
