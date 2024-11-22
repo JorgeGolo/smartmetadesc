@@ -6,10 +6,9 @@
 ---
 
 ## Características
-- Lista las entradas publicadas en el escritorio de administración.
-- Indica si una entrada tiene la meta descripción vacía o completa.
 - Añade un submenú en **Herramientas** para acceder a una página personalizada con esta funcionalidad.
 - Compatible con entradas estándar de WordPress.
+- Lista las entradas publicadas con metadescripción vacía en el escritorio de administración.
 
 ---
 
