@@ -31,7 +31,13 @@ function smartmetadesc_enqueue_scripts($hook) {
         '1.0', // Versión
         true // Cargar en el footer
     );
+
+        // Pasar la clave API al script
+        wp_localize_script('smartmetadesc-script', 'smartMetaDescConfig', [
+            'apiKey' => get_option('smartmetadesc_api_key', ''),
+        ]);
 }
+
 
 
 // Agregar un enlace de "Ajustes" en el menú de WordPress
@@ -165,13 +171,15 @@ function smartmetadesc_render_page() {
     // Mostrar las entradas con meta descripción vacía, según el número seleccionado
     if ($empty_meta_count > 0) {
         $posts_to_show = array_slice($empty_meta_posts, 0, $num_posts); // Mostrar solo el número seleccionado
-        echo '<ul>';
+        echo '<hr/>';
+        echo '<ul class="smd_postslist">';
         foreach ($posts_to_show as $post) {
             echo '<li>';
-            echo esc_html($post->post_title);
-            echo '<button type="button" class="button button-secondary" data-post-id="' . esc_attr($post->ID) . '">Generar MetaDesc</button>';
-            echo '<div class="textarea-container" style="display: none; margin-top: 10px;">';
+            echo '<h3 class="smd_spantitulo">' . esc_html($post->post_title) . '</h3>';
+            echo '<button type="button" class="smd_buttongen button button-secondary" data-post-id="' . esc_attr($post->ID) . '">Generar Metadescripción</button>';
+            echo '<div class="textarea-container" class="smd_textarea" style="display: none;">';
             echo '<textarea rows="4" cols="50" id="textarea-' . esc_attr($post->ID) . '" placeholder="Escribe la meta descripción aquí..."></textarea>';
+            echo '<button type="button" class="smd_buttonsave button button-secondary">Guardar</button>';
             echo '</div>';
             echo '</li>';
         }
@@ -205,3 +213,19 @@ function smartmetadesc_get_post_content($data) {
         'content' => wp_strip_all_tags($post->post_content)
     );
 }
+
+function smartmetadesc_enqueue_styles() {
+    // Obtener la URL del plugin
+    $plugin_url = plugin_dir_url(__FILE__);
+    
+    // Registrar y encolar el archivo CSS
+    wp_enqueue_style(
+        'smartmetadesc-styles', // Identificador único del estilo
+        $plugin_url . 'assets/css/smartmetadesc.css', // Ruta del archivo CSS
+        array(), // Dependencias (vacío si no hay)
+        '1.0.0', // Versión del archivo
+        'all' // Tipo de medio (e.g., 'all', 'screen', 'print')
+    );
+}
+// Hook para cargar los estilos en el frontend o backend
+add_action('admin_enqueue_scripts', 'smartmetadesc_enqueue_styles');

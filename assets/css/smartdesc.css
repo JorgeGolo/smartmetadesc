@@ -1,0 +1,35 @@
+.smd_postslist li {
+    display: flex; 
+    align-items: center; 
+    padding: 10px; 
+    border-bottom: 1px solid #ddd; 
+}
+
+.smd_spantitulo {
+    flex: 0 0 33%;
+    margin-right: 10px; 
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.smd_buttongen, .smd_textarea {
+    margin-right: 15px!important; 
+}
+
+.textarea-container {
+    display: flex!important;
+    align-items: center; /* Alinea verticalmente los elementos */
+    gap: 10px; /* Espaciado entre el textarea y el botón */
+}
+
+.textarea-container textarea {
+    flex: 1; /* Permite que el textarea se expanda ocupando más espacio */
+    resize: vertical; /* Permite solo redimensionar verticalmente */
+}
+
+.textarea-container button {
+    height: auto; /* Ajusta automáticamente la altura del botón */
+    padding: 0.5em 1em; /* Espaciado interno del botón */
+    white-space: nowrap; /* Evita que el texto del botón se desborde */
+}

@@ -1,7 +1,7 @@
 # smartmetadesc
 
 ## Descripción
-**smartmetadesc** es un plugin de WordPress que facilita la gestión de las entradas publicadas al mostrar en el escritorio de administración (dashboard) una lista de las entradas con información sobre el estado de su meta descripción, y permite generar una metadescripción a través de una IA basándose en el contenido de la entrada. Además, agrega un enlace dentro de la sección **Herramientas** del menú de administración para acceder a una página personalizada con esta misma información.
+**smartmetadesc** es un plugin de WordPress que facilita la gestión de las entradas publicadas al mostrar en el escritorio de administración (dashboard) una lista de las entradas con información sobre el estado de su meta descripción, y permite generar una metadescripción a través de una IA basándose en el contenido de la entrada. Agrega un enlace dentro de la sección **Herramientas** del menú de administración para acceder a una página personalizada con esta misma información.
 
 ---
 
@@ -11,6 +11,8 @@
 - Lista las entradas publicadas con metadescripción vacía en el escritorio de administración.
 - Permite generar una metadescripción para cada entrada
 - Usa una API Key proporcionada por Groq
+- 
+
 ---
 
 ## Requisitos
@@ -31,18 +33,19 @@
 1. Activa el plugin desde el menú **Plugins** de WordPress.
 2. Para ver la lista de entradas:
    - Accede a **Herramientas > Smart Meta Desc** desde el menú lateral.
-3. Verás una lista de entradas publicadas sin metadescripción.
-4. Cada entrada se mostrará junto a un botón "Generar Metadesc", que mostrará un textarea con una metadescricpción generada por IA
+3. Verás una lista de hasta 10 entradas publicadas sin metadescripción.
+4. Cada entrada se mostrará junto a un botón "Generar Metadescripción", que mostrará un textarea con una metadescricpción generada por IA
+5. 
 
 ---
 
 ## Configuración
 1. Puedes seleccionar el número de entradas por defecto que se muestra
 2. Puedes seleccionar qué modelo de IA generará las metadescripciones - AÚN NO FUNCIONA
-3. Puedes poner una API Key - aún no funciona
+3. Puedes poner una API Key proporcionada por Groq -> groq.com
 
 ---
 
 ## Créditos
 - **Autor:** [Jorge GL - likonet.es]
-- **Versión:** 1.1
+- **Versión:** 1.2
