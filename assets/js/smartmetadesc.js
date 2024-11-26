@@ -55,36 +55,41 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Realizar solicitud a la API de Groq
-    async function llamarApiGroq(mensaje, modelo) {
-        try {
-            const response = await fetch(GROQ_API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${API_KEY}`,
-                },
-                body: JSON.stringify({
-                    messages: [{ role: "user", content: mensaje }],
-                    model: modelo,
-                }),
-            });
+async function llamarApiGroq(mensaje, modelo) {
+    try {
+        const response = await fetch(GROQ_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_KEY}`,
+            },
+            body: JSON.stringify({
+                messages: [
+                    { role: "user", content: mensaje },
+                    { role: "assistant", content: "" } // Prefilling con texto vacío
+                ],
+                model: modelo,
+                stop: "\n", // Detenemos al final de la primera línea o al encontrar un salto de línea
+                max_tokens: 30 // Limitamos el tamaño de la respuesta generada
+            }),
+        });
 
-            if (!response.ok) {
-                throw new Error(`Error en la API: ${response.statusText} - ${response.status}`);
-            }
-
-            const data = await response.json();
-            return data.choices[0].message.content;
-        } catch (error) {
-            console.error("Error al comunicarse con la API de Groq:", error);
-            throw error;
+        if (!response.ok) {
+            throw new Error(`Error en la API: ${response.statusText} - ${response.status}`);
         }
+
+        const data = await response.json();
+        return data.choices[0].message.content.trim();
+    } catch (error) {
+        console.error("Error al comunicarse con la API de Groq:", error);
+        throw error;
     }
+}
 
     // Obtener saludo
     async function obtenerSaludo(contenido) {
         
-        mensaje="Devuelve una metadescripción de longitud entre 150 y 160 caracteres,lista para guardar en la base de datos, para la entrada con este contenido:" + contenido;
+        mensaje="Devuelve una metadescripción de longitud entre 150 y 160 caracteres, sin ningun mensaje introductorio, para la entrada con este contenido:" + contenido;
         
         return await llamarApiGroq(mensaje, "llama3-8b-8192");
     }
@@ -97,7 +102,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(`Error en la API de WordPress: ${response.statusText}`);
             }
             const data = await response.json();
-            return data.content || "Contenido no disponible.";
+    
+            // Combinar título y contenido
+            const titulo = data.title || "Sin título";
+            const contenido = data.content || "Contenido no disponible.";
+    
+            return `${titulo}. ${contenido}`; // Devuelve título seguido del contenido
         } catch (error) {
             console.error("Error al obtener el contenido de la entrada:", error);
             throw error;
