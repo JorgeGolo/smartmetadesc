@@ -7,9 +7,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    // Función para manejar el cambio del número de entradas a mostrar
+    function aplicarLimiteEntradas() {
+        const numPostsInput = document.getElementById("num_posts_input");
+        if (numPostsInput) {
+            const numPosts = numPostsInput.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set("num_posts", numPosts);
+            window.location.href = url.toString();
+        } else {
+            console.error("No se encontró el campo num_posts_input.");
+        }
+    }
+
+    // Agregar el evento al botón "Aplicar"
+    const applyPostsLimitButton = document.getElementById("apply_posts_limit");
+    if (applyPostsLimitButton) {
+        applyPostsLimitButton.addEventListener("click", aplicarLimiteEntradas);
+    }
+
     // Función para manejar el botón "Generar Metadescripción"
     function handleGenerateButtonClick(button) {
-        
         // Mostrar el contenedor del botón clickeado
         const container = button.closest("li")?.querySelector(".textarea-container");
         if (!container) {
@@ -42,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error(error);
             });
     }
-
 
     // Añadir eventos a los botones "Generar Metadescripción"
     document.querySelectorAll(".smd_buttongen").forEach(button => {
@@ -98,6 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error al guardar la metadescripción:", error);
             alert("Hubo un problema al guardar la metadescripción.");
         }
+
+        // Recargar la página después de guardar
+        window.location.reload();
     }
 
     // Funciones auxiliares

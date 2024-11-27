@@ -136,6 +136,11 @@ function smartmetadesc_render_page() {
     // Comprobar si Yoast SEO está activo
     $yoast_active = is_plugin_active('wordpress-seo/wp-seo.php');
 
+// Obtener el número de entradas a mostrar desde la configuración del plugin (o por defecto)
+    $default_posts_limit = get_option('smartmetadesc_num_posts', 10); // Valor predeterminado: 10
+    $num_posts_default = isset($_GET['num_posts']) ? intval($_GET['num_posts']) : $default_posts_limit;
+
+
     // Obtener todas las entradas
     $all_posts = get_posts(array(
         'post_type'   => 'post',   // Tipo de contenido (entradas)
@@ -163,10 +168,19 @@ function smartmetadesc_render_page() {
     // Mostrar el resultado
     echo '<p><strong>' . $empty_meta_count . '</strong> entradas con meta descripción vacía.</p>';
 
-    // Mostrar las entradas con meta descripción vacía
+    // Campo para ingresar el número de entradas
+    echo '<div style="margin-bottom: 20px;">';
+    echo '<label for="num_posts_input">Número de entradas a mostrar:</label>';
+    echo '<input type="number" id="num_posts_input" value="' . esc_attr($num_posts_default) . '" min="1" />';
+    echo '<button id="apply_posts_limit" class="button button-primary">Aplicar</button>';
+    echo '</div>';
+
+    // Mostrar las entradas con meta descripción vacía (aplicando el límite)
     if ($empty_meta_count > 0) {
         echo '<ul class="smd_postslist">';
+        $count = 0;
         foreach ($empty_meta_posts as $post) {
+            if ($count >= $num_posts_default) break; // Detener al alcanzar el límite
             echo '<li>';
             echo '<h3 class="smd_spantitulo">' . esc_html($post->post_title) . '</h3>';
             echo '<button type="button" class="smd_buttongen button button-secondary" data-post-id="' . esc_attr($post->ID) . '">Generar Metadescripción</button>';
@@ -175,6 +189,7 @@ function smartmetadesc_render_page() {
             echo '<button type="button" class="smd_buttonsave button button-secondary">Guardar</button>';
             echo '</div>';
             echo '</li>';
+            $count++;
         }
         echo '</ul>';
     } else {
@@ -182,6 +197,8 @@ function smartmetadesc_render_page() {
     }
 
     echo '</div>';
+
+
 }
 
 add_action('rest_api_init', function () {
