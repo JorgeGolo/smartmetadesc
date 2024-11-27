@@ -132,6 +132,7 @@ if (!function_exists('is_plugin_active')) {
 function smartmetadesc_render_page() {
     echo '<div class="wrap">';
     echo '<h1>Smart Meta Desc</h1>';
+    echo '<div id="notification" class="hidden"></div>';
 
     // Comprobar si Yoast SEO está activo
     $yoast_active = is_plugin_active('wordpress-seo/wp-seo.php');

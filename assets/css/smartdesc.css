@@ -33,3 +33,23 @@
     padding: 0.5em 1em; /* Espaciado interno del botón */
     white-space: nowrap; /* Evita que el texto del botón se desborde */
 }
+
+#notification {
+    padding: 10px 20px;
+    background-color: #4caf50; /* Verde para éxito */
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+#notification.error {
+    background-color: #f44336; /* Rojo para error */
+}
+#notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}

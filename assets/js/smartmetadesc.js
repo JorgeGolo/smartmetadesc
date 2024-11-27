@@ -72,28 +72,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Función para guardar la metadescripción
+    function showNotification(message, isError = false) {
+        const notification = document.getElementById("notification");
+        if (!notification) return;
+    
+        notification.textContent = message;
+        notification.className = isError ? "error show" : "show";
+    
+        // Ocultar automáticamente después de 3 segundos
+        setTimeout(() => {
+            notification.className = "hidden";
+        }, 3000);
+    }
+    
     async function guardarMetaDescripcion(button) {
         const container = button.closest(".textarea-container");
         const textarea = container.querySelector("textarea");
-
+    
         if (!textarea) {
             console.error("No se encontró el textarea asociado.");
             return;
         }
-
+    
         const metaDescripcion = textarea.value;
         const postId = button.closest("li").querySelector(".smd_buttongen").getAttribute("data-post-id");
-
+    
         if (!postId) {
             console.error("No se encontró el ID de la publicación.");
             return;
         }
-
+    
         if (!metaDescripcion.trim()) {
-            alert("La metadescripción no puede estar vacía.");
+            showNotification("La metadescripción no puede estar vacía.", true);
             return;
         }
-
+    
         try {
             // Enviar la metadescripción a la API
             const response = await fetch(`/wp-json/smartmetadesc/v1/guardar/${postId}`, {
@@ -103,19 +116,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 body: JSON.stringify({ metaDescripcion }),
             });
-
+    
             if (!response.ok) {
                 throw new Error(`Error en la API: ${response.statusText}`);
             }
-
+    
             const data = await response.json();
             console.log("Metadescripción guardada exitosamente:", data);
-            alert("Metadescripción guardada correctamente.");
+            showNotification("Metadescripción guardada correctamente.");
         } catch (error) {
             console.error("Error al guardar la metadescripción:", error);
-            alert("Hubo un problema al guardar la metadescripción.");
+            showNotification("Hubo un problema al guardar la metadescripción.", true);
         }
-
+    
         // Recargar la página después de guardar
         window.location.reload();
     }
