@@ -124,18 +124,19 @@ function smartmetadesc_config_page() {
 
 
 // Página principal del plugin (mostrar las entradas con meta descripción vacía)
+// Comprobar si un plugin está activo
+if (!function_exists('is_plugin_active')) {
+    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+}
+
 function smartmetadesc_render_page() {
     echo '<div class="wrap">';
     echo '<h1>Smart Meta Desc</h1>';
 
-    // Obtener la opción seleccionada
-    $selected_option = get_option('smartmetadesc_option', 'Gemini'); // Valor predeterminado "Gemini"
+    // Comprobar si Yoast SEO está activo
+    $yoast_active = is_plugin_active('wordpress-seo/wp-seo.php');
 
-    // Mostrar la opción seleccionada
-    //echo '<p><strong>Opción seleccionada:</strong> ' . esc_html($selected_option) . '</p>';
-
-
-    // Obtener todas las entradas con meta descripción vacía
+    // Obtener todas las entradas
     $all_posts = get_posts(array(
         'post_type'   => 'post',   // Tipo de contenido (entradas)
         'post_status' => 'publish', // Solo entradas publicadas
@@ -145,52 +146,42 @@ function smartmetadesc_render_page() {
     // Filtrar las entradas con meta descripción vacía
     $empty_meta_posts = array();
     foreach ($all_posts as $post) {
-        $meta_description = get_post_meta($post->ID, 'meta_description', true);
+        // Comprobar el meta campo según el estado de Yoast SEO
+        $meta_description = $yoast_active
+            ? get_post_meta($post->ID, '_yoast_wpseo_metadesc', true) // Campo de Yoast SEO
+            : get_post_meta($post->ID, 'meta_description', true);    // Campo genérico
+
+        // Agregar al array si la meta descripción está vacía
         if (empty($meta_description)) {
-            $empty_meta_posts[] = $post; // Guardar solo las entradas con meta descripción vacía
+            $empty_meta_posts[] = $post;
         }
     }
-
-    // Obtener el número de entradas a mostrar desde el formulario o usar un valor por defecto
-    $num_posts = isset($_GET['num_posts']) ? intval($_GET['num_posts']) : 10;
 
     // Contar las entradas con meta descripción vacía
     $empty_meta_count = count($empty_meta_posts);
 
-    // Mostrar el número de entradas con meta descripción vacía
+    // Mostrar el resultado
     echo '<p><strong>' . $empty_meta_count . '</strong> entradas con meta descripción vacía.</p>';
 
-    // Formulario para seleccionar el número de entradas
-    echo '<form method="get" action="">';
-    echo '<input type="hidden" name="page" value="smartmetadesc-lista" />';
-    echo '<label for="num_posts">Número de entradas a mostrar:</label>';
-    echo '<input type="number" id="num_posts" name="num_posts" value="' . esc_attr($num_posts) . '" min="1" max="' . count($empty_meta_posts) . '" />';
-    echo '<button type="submit" class="button button-primary">Actualizar</button>';
-    echo '</form>';
-
-    // Mostrar las entradas con meta descripción vacía, según el número seleccionado
+    // Mostrar las entradas con meta descripción vacía
     if ($empty_meta_count > 0) {
-        $posts_to_show = array_slice($empty_meta_posts, 0, $num_posts); // Mostrar solo el número seleccionado
-        echo '<hr/>';
         echo '<ul class="smd_postslist">';
-        foreach ($posts_to_show as $post) {
+        foreach ($empty_meta_posts as $post) {
             echo '<li>';
             echo '<h3 class="smd_spantitulo">' . esc_html($post->post_title) . '</h3>';
             echo '<button type="button" class="smd_buttongen button button-secondary" data-post-id="' . esc_attr($post->ID) . '">Generar Metadescripción</button>';
-            echo '<div class="textarea-container" class="smd_textarea" style="display: none;">';
+            echo '<div class="textarea-container smd_textarea" style="display: none;">';
             echo '<textarea rows="4" cols="50" id="textarea-' . esc_attr($post->ID) . '" placeholder="Escribe la meta descripción aquí..."></textarea>';
             echo '<button type="button" class="smd_buttonsave button button-secondary">Guardar</button>';
             echo '</div>';
             echo '</li>';
         }
-                echo '</ul>';
+        echo '</ul>';
     } else {
         echo '<p>No hay entradas con meta descripción vacía.</p>';
     }
 
     echo '</div>';
-
-    
 }
 
 add_action('rest_api_init', function () {

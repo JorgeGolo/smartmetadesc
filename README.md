@@ -11,7 +11,7 @@
 - Lista las entradas publicadas con metadescripción vacía en el escritorio de administración.
 - Permite generar una metadescripción para cada entrada
 - Usa una API Key proporcionada por Groq
-- 
+- Compatilbilidad con Yoast SEO
 
 ---
 
@@ -34,7 +34,7 @@
 2. Para ver la lista de entradas:
    - Accede a **Herramientas > Smart Meta Desc** desde el menú lateral.
 3. Verás una lista de hasta 10 entradas publicadas sin metadescripción.
-4. Cada entrada se mostrará junto a un botón "Generar Metadescripción", que mostrará un textarea con una metadescricpción generada por IA
+4. Cada entrada se mostrará junto a un botón "Generar Metadescripción", que mostrará un textarea con una metadescricpción generada por IA junto con un botón "Guardar"
 5. 
 
 ---

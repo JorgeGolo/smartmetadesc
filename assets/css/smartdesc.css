@@ -20,7 +20,7 @@
 .textarea-container {
     display: flex!important;
     align-items: center; /* Alinea verticalmente los elementos */
-    gap: 10px; /* Espaciado entre el textarea y el botón */
+    gap: 15px; /* Espaciado entre el textarea y el botón */
 }
 
 .textarea-container textarea {
