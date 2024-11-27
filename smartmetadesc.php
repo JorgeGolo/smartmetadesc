@@ -220,3 +220,35 @@ function smartmetadesc_enqueue_styles() {
 }
 // Hook para cargar los estilos en el frontend o backend
 add_action('admin_enqueue_scripts', 'smartmetadesc_enqueue_styles');
+
+add_action('rest_api_init', function () {
+    register_rest_route('smartmetadesc/v1', '/guardar/(?P<id>\d+)', array(
+        'methods' => 'POST',
+        'callback' => 'guardar_meta_descripcion',
+        'permission_callback' => '__return_true',
+
+    ));
+});
+
+function guardar_meta_descripcion($request) {
+    $post_id = $request->get_param('id');
+    $meta_descripcion = sanitize_text_field($request->get_param('metaDescripcion'));
+
+    if (!$post_id || empty($meta_descripcion)) {
+        return new WP_Error('invalid_request', 'Faltan parámetros o son inválidos.', array('status' => 400));
+    }
+
+    // Verificar si Yoast SEO está activo
+    if (is_plugin_active('wordpress-seo/wp-seo.php')) {
+        // Guardar la metadescripción en el campo de Yoast
+        update_post_meta($post_id, '_yoast_wpseo_metadesc', $meta_descripcion);
+    } else {
+        // Guardar en el campo genérico
+        update_post_meta($post_id, 'meta_description', $meta_descripcion);
+    }
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'message' => 'Metadescripción guardada correctamente.',
+    ));
+}

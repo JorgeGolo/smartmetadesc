@@ -35,7 +35,7 @@
    - Accede a **Herramientas > Smart Meta Desc** desde el menú lateral.
 3. Verás una lista de hasta 10 entradas publicadas sin metadescripción.
 4. Cada entrada se mostrará junto a un botón "Generar Metadescripción", que mostrará un textarea con una metadescricpción generada por IA junto con un botón "Guardar"
-5. 
+5. Al pulsar en Guardar, se guarda la metadescripción de la entrada
 
 ---
 

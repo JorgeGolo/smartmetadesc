@@ -43,17 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // Función para manejar el botón "Guardar"
-    function handleSaveButtonClick(button) {
-
-        // Obtener el ID del textarea relacionado
-        const textarea = button.closest(".textarea-container").querySelector("textarea");
-        if (textarea) {
-           // console.log("Contenido del textarea:", textarea.value);
-        } else {
-            console.error("No se encontró el textarea asociado.");
-        }
-    }
 
     // Añadir eventos a los botones "Generar Metadescripción"
     document.querySelectorAll(".smd_buttongen").forEach(button => {
@@ -65,59 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
         button.addEventListener("click", () => guardarMetaDescripcion(button));
     });
 
-    // Funciones auxiliares
-    async function llamarApiGroq(mensaje, modelo) {
-        try {
-            const response = await fetch(GROQ_API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${API_KEY}`,
-                },
-                body: JSON.stringify({
-                    messages: [{ role: "user", content: mensaje }],
-                    model: modelo,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error en la API: ${response.statusText} - ${response.status}`);
-            }
-
-            const data = await response.json();
-            const contenidoLimpio = data.choices[0].message.content.trim().replace(/^"|"$/g, '');
-            return contenidoLimpio;
-        } catch (error) {
-            console.error("Error al comunicarse con la API de Groq:", error);
-            throw error;
-        }
-    }
-
-    async function obtenerSaludo(contenido) {
-        const mensaje = `Devuelve una metadescripción de longitud entre 150 y 160 caracteres, en una sola frase, sin ningun mensaje introductorio, para la entrada con este contenido: ${contenido}`;
-        return await llamarApiGroq(mensaje, "llama3-8b-8192");
-    }
-
-    async function obtenerContenidoEntrada(postId) {
-        try {
-            const response = await fetch(`/wp-json/smartmetadesc/v1/entrada/${postId}`);
-            if (!response.ok) {
-                throw new Error(`Error en la API de WordPress: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            const titulo = data.title || "Sin título";
-            const contenido = data.content || "Contenido no disponible.";
-            return `${titulo}. ${contenido}`;
-        } catch (error) {
-            console.error("Error al obtener el contenido de la entrada:", error);
-            throw error;
-        }
-    }
-
     // Función para guardar la metadescripción
     async function guardarMetaDescripcion(button) {
-        // Encuentra el textarea asociado al botón
         const container = button.closest(".textarea-container");
         const textarea = container.querySelector("textarea");
 
@@ -134,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Validar que la metadescripción no esté vacía
         if (!metaDescripcion.trim()) {
             alert("La metadescripción no puede estar vacía.");
             return;
@@ -163,4 +100,52 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Funciones auxiliares
+    async function llamarApiGroq(mensaje, modelo) {
+        try {
+            const response = await fetch(GROQ_API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${API_KEY}`,
+                },
+                body: JSON.stringify({
+                    messages: [{ role: "user", content: mensaje }],
+                    model: modelo,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error en la API: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content.trim().replace(/^"|"$/g, '');
+        } catch (error) {
+            console.error("Error al comunicarse con la API de Groq:", error);
+            throw error;
+        }
+    }
+
+    async function obtenerSaludo(contenido) {
+        const mensaje = `Devuelve una metadescripción de longitud entre 150 y 160 caracteres, en una sola frase, sin mensajes introductorios, para la entrada con este contenido: ${contenido}`;
+        return await llamarApiGroq(mensaje, "llama3-8b-8192");
+    }
+
+    async function obtenerContenidoEntrada(postId) {
+        try {
+            const response = await fetch(`/wp-json/smartmetadesc/v1/entrada/${postId}`);
+            if (!response.ok) {
+                throw new Error(`Error en la API de WordPress: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const titulo = data.title || "Sin título";
+            const contenido = data.content || "Contenido no disponible.";
+            return `${titulo}. ${contenido}`;
+        } catch (error) {
+            console.error("Error al obtener el contenido de la entrada:", error);
+            throw error;
+        }
+    }
 });
