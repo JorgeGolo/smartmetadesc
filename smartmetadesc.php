@@ -182,7 +182,7 @@ function smartmetadesc_render_page() {
         $count = 0;
         foreach ($empty_meta_posts as $post) {
             if ($count >= $num_posts_default) break; // Detener al alcanzar el límite
-            echo '<li>';
+            echo '<li data-post-id="' . esc_attr($post->ID) . '">';
             echo '<h3 class="smd_spantitulo">' . esc_html($post->post_title) . '</h3>';
             echo '<button type="button" class="smd_buttongen button button-secondary" data-post-id="' . esc_attr($post->ID) . '">Generar Metadescripción</button>';
             echo '<div class="textarea-container smd_textarea" style="display: none;">';

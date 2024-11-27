@@ -85,53 +85,71 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3000);
     }
     
-    async function guardarMetaDescripcion(button) {
-        const container = button.closest(".textarea-container");
-        const textarea = container.querySelector("textarea");
-    
-        if (!textarea) {
-            console.error("No se encontró el textarea asociado.");
-            return;
-        }
-    
-        const metaDescripcion = textarea.value;
-        const postId = button.closest("li").querySelector(".smd_buttongen").getAttribute("data-post-id");
-    
-        if (!postId) {
-            console.error("No se encontró el ID de la publicación.");
-            return;
-        }
-    
-        if (!metaDescripcion.trim()) {
-            showNotification("La metadescripción no puede estar vacía.", true);
-            return;
-        }
-    
-        try {
-            // Enviar la metadescripción a la API
-            const response = await fetch(`/wp-json/smartmetadesc/v1/guardar/${postId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ metaDescripcion }),
-            });
-    
-            if (!response.ok) {
-                throw new Error(`Error en la API: ${response.statusText}`);
-            }
-    
-            const data = await response.json();
-            console.log("Metadescripción guardada exitosamente:", data);
-            showNotification("Metadescripción guardada correctamente.");
-        } catch (error) {
-            console.error("Error al guardar la metadescripción:", error);
-            showNotification("Hubo un problema al guardar la metadescripción.", true);
-        }
-    
-        // Recargar la página después de guardar
-        window.location.reload();
+   async function guardarMetaDescripcion(button) {
+    const container = button.closest(".textarea-container");
+    const textarea = container.querySelector("textarea");
+
+    if (!textarea) {
+        console.error("No se encontró el textarea asociado.");
+        return;
     }
+
+    const metaDescripcion = textarea.value;
+    const postId = button.closest("li").querySelector(".smd_buttongen").getAttribute("data-post-id");
+
+    if (!postId) {
+        console.error("No se encontró el ID de la publicación.");
+        return;
+    }
+
+    if (!metaDescripcion.trim()) {
+        showNotification("La metadescripción no puede estar vacía.", true);
+        return;
+    }
+
+    try {
+        // Enviar la metadescripción a la API
+        const response = await fetch(`/wp-json/smartmetadesc/v1/guardar/${postId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ metaDescripcion }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en la API: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Actualizar la lista dinámicamente
+        actualizarMetaDescripcionEnLista(postId, data.metaDescripcion);
+
+        showNotification("Metadescripción guardada correctamente.");
+    } catch (error) {
+        console.error("Error al guardar la metadescripción:", error);
+        showNotification("Hubo un problema al guardar la metadescripción.", true);
+    }
+}
+
+// Función para actualizar la lista en el DOM
+function actualizarMetaDescripcionEnLista(postId, nuevaMetaDescripcion) {
+    const lista = document.querySelector(`li[data-post-id="${postId}"]`);
+    if (!lista) {
+        console.error(`No se encontró la entrada con ID ${postId} en la lista.`);
+        return;
+    }
+
+    // Suponiendo que la metadescripción se encuentra en un elemento específico, como un <p>
+    const descripcionElemento = lista.querySelector(".meta-descripcion");
+    if (descripcionElemento) {
+        descripcionElemento.textContent = nuevaMetaDescripcion;
+    } else {
+        console.error("No se encontró el elemento de metadescripción para actualizar.");
+    }
+}
+
 
     // Funciones auxiliares
     async function llamarApiGroq(mensaje, modelo) {
